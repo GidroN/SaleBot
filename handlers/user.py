@@ -66,12 +66,14 @@ async def process_my_requests(message: Message):
 
 
 @router.message(Command(commands=['help']))
+@router.message(F.text == BT.HELP)
 async def process_help_command(message: Message):
-    await message.answer(f"Наши комманды:"
-                         f"/my_requests - для просмотра\n"
+    await message.answer(f"Список команд:\n"
+                         f"/my_requests - для просмотра активных запросов\n"
                          f"/contacts - для контактов\n"
                          f"/catalog - для просмотра каталога\n"
-                         f"/help - для просмотра этого сообщения")
+                         f"/help - для просмотра этого сообщения\n"
+                         f"Если не вы нашли для себя нужную опцию, то там вам сюда - /contacts")
 
 
 @router.message()

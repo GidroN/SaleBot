@@ -4,7 +4,7 @@ from aiogram.types import Message
 
 from database.models import Product, Subscription
 from filters import AdminFilter
-from keyboards import ready_mk
+from keyboards import ready_mk, cancel_mk
 from states import AddProductForm, AddSubscriptionForm, ChangeProductForm, DeleteProductForm
 from utils import parse_multiline_input, get_main_kb
 from keyboards.button_text import ButtonText as BT
@@ -19,14 +19,18 @@ async def process_productform(message: Message, state: FSMContext, bot: Bot):
     photo_id = message.photo[-1].file_id
     path = f'database/img/products/{photo_id}.png'
     await bot.download(photo_id, path)
-    await Product.create(title=title, description=description, price=price, img=path, img_file_id=photo_id)
+    try:
+        await Product.create(title=title, description=description, price=price, img=path, img_file_id=photo_id)
+    except Exception as e:
+        await message.answer('Произошла ошибка при добавлении товара. Убедитесь в правильности написания пунктов.',
+                             reply_markup=cancel_mk)
+        return
     await message.answer('Новый товар успешно добавлен!', reply_markup=get_main_kb(str(message.from_user.id)))
     await state.clear()
 
 
-@router.message(AdminFilter(), AddProductForm.product, ~F.photo)
-@router.message(AdminFilter(), AddProductForm.product, F.photo & ~F.caption)
-async def process_invalid_productform(message: Message, state: FSMContext, bot: Bot):
+@router.message(AdminFilter(), AddProductForm.product, (~F.photo) | (F.photo & ~F.caption))
+async def process_invalid_productform(message: Message, state: FSMContext):
     if message.text == BT.CANCEL:
         await state.clear()
         await message.answer('Отменено.', reply_markup=get_main_kb(str(message.from_user.id)))

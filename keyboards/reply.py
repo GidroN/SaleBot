@@ -6,10 +6,11 @@ user_mk = ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text=BT.CATALOG),
+            KeyboardButton(text=BT.MY_REQUESTS)
         ],
         [
             KeyboardButton(text=BT.CONTACTS),
-            KeyboardButton(text=BT.MY_REQUESTS)
+            KeyboardButton(text=BT.HELP),
         ]
     ],
     resize_keyboard=True,

@@ -50,12 +50,12 @@ async def confirm_payment(callback: CallbackQuery, bot: Bot):
     user = await User.get(tg_id=user_id)
     q = await Queue.create(user=user, product_type=product)
     await notify_admins(f'<b>Новая заявка!</b>\n'
-                        f'№ {q.req_id}\n'
+                        f'№ <b>{q.req_id}</b>\n'
                         f'user_id: {user_id}\n'
                         f'Имя: {user.name}\n'
                         f'Товар: {product.title}\n'
                         f'Сумма: {product.price}₽\n'
-                        f'Дата: {q.date.strftime("%Y-%m-%d %H:%M")}', q.req_id, bot)
+                        f'Дата: {q.date.strftime("%Y-%m-%d %H:%M")}', bot, q.req_id)
 
     await callback.message.delete()
     await callback.message.answer(

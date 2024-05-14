@@ -14,6 +14,7 @@ class ButtonText(StrEnum):
     BUY = '💵 Купить'
     MY_REQUESTS = '📖 Мои заявки'
     DELAY = '🕰 Отложить'
+    HELP = '❓ Помощь'
 
     ADMIN_PANEL = '🕵️‍♂️ Админ. панель'
     REQUESTS = '📚 Заявки'
@@ -25,4 +26,3 @@ class ButtonText(StrEnum):
     CHANGE_PRODUCT_NAME = '✏ Изменить имя'
     CHANGE_PRODUCT_DECSRIPTION = '✏ Изменить описание'
     CHANGE_PRODUCT_PRICE = '✏ Изменить цену'
-

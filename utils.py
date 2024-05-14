@@ -24,9 +24,12 @@ def get_main_kb(tg_id: str):
     return admin_mk if is_admin(tg_id) else user_mk
 
 
-async def notify_admins(text: str, req_id: int | str, bot: Bot):
+async def notify_admins(text: str, bot: Bot, req_id: int | str = None):
     for admin_id in ADMINS:
-        await bot.send_message(text=text, chat_id=admin_id, reply_markup=await admin_confirm_panel(req_id))
+        if req_id:
+            await bot.send_message(text=text, chat_id=admin_id, reply_markup=await admin_confirm_panel(req_id))
+        else:
+            await bot.send_message(text=text, chat_id=admin_id)
 
 
 async def get_user_and_buy_info_using_req_id(req_id: str):

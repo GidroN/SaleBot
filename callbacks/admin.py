@@ -7,7 +7,7 @@ from filters import AdminFilter
 from keyboards import products, cancel_mk, change_product_panel, delete_product_mk, ready_mk
 from keyboards.button_text import ButtonText as BT
 from states import AddProductForm, AddSubscriptionForm, ChangeProductForm, DeleteProductForm
-from utils import get_main_kb, get_user_and_buy_info_using_req_id
+from utils import get_main_kb, get_user_and_buy_info_using_req_id, notify_admins
 
 router = Router()
 
@@ -102,15 +102,16 @@ async def admin_admin_confirm_request(callback: CallbackQuery, bot: Bot):
         await callback.message.edit_text('Данная заявка уже была обработана.')
         return
 
-    if sub is None:
-        await callback.answer('Нельзя принять заявку. Товар закончился.', show_alert=True)
-        return
-
     await callback.message.edit_text('Заявка одобрена!')
     await bot.send_message(chat_id=user_id, text=f'Ваша заявка № <b>{req_id}</b> была одобрена! Спасибо за покупку!')
     await bot.send_photo(chat_id=user_id,
                          photo=sub.img_file_id,
                          caption='Ваша покупка.')
+
+    if not Subscription.filter(product_type=sub.product_type).exists():
+        await notify_admins(f'<b>Закончились подписки!</b>\n'
+                            f'Товар: {sub.product_type.title}', bot)
+
     q.is_active = False
     await q.save()
     await sub.delete()
@@ -125,7 +126,7 @@ async def admin_cancel_request(callback: CallbackQuery, bot: Bot):
         await callback.message.edit_text('Данная заявка уже была обработана.')
         return
 
-    await callback.message.edit_text(f'Заявка № <b>{req_id}</b> отменена')
+    await callback.message.edit_text(f'Заявка № <b>{req_id}</b> отменена.')
     await bot.send_message(chat_id=user_id, text=f'Ваша заявка № <b>{req_id}</b> была отменена! Если возникли вопросы, используйте - '
                                                  '/contacts')
     q.is_active = False
